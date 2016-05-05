@@ -23,7 +23,7 @@
 }(this, () => {
     'use strict';
 
-    if (!("Notification" in window)) {
+    if (!("Notification" in this)) {
         console.warn('This browser does not support system notifications');
     }
 
