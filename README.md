@@ -30,10 +30,8 @@ browserNotif.config({
 browserNotif.notify('First Notif', 'Today is your due date task!')
 
 // with callback and onClick event
-browserNotif.notify('First Notif', 'Today is your due date task!', function() {
-	console.log('First Notif fired!')
-})
-.onClick(() => {window.open('https://www.indosystem.com')});
+browserNotif.notify('First Notif', 'Today is your due date task!', () => console.log('First Notif fired!'))
+			.onClick(() => window.open('https://www.indosystem.com'));
 
 // Create another instance
 myNotif = Object.create(browserNotif)

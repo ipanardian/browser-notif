@@ -3,27 +3,27 @@
 *  (c) 2016 Ipan Ardian
 *
 *  Lets a web page or app send notifications that are displayed outside the page at the system level. 
-*  This lets web apps send information to a user even if the application is idle or in the background.
+*  This lets web apps send information to a user even if the application is idle, in the background, switched tabs or moved to a different app.
 *  For details, see the web site: https://github.com/ipanardian/browser-notif
 *  The MIT License
 */
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['b'], b => {
-            return (root.browserNotif = factory(b));
+        define([], () => {
+            return (root.browserNotif = factory());
         });
     } 
     else if (typeof module === 'object' && module.exports) {
-        module.exports = factory(require('b'));
+        module.exports = factory();
     } 
     else {
-        root.browserNotif = factory(root.b);
+        root.browserNotif = factory();
     }
-}(this, b => {
+}(this, () => {
     'use strict';
 
-    if (!("Notification" in this)) {
+    if (!("Notification" in window)) {
         console.warn('This browser does not support system notifications');
     }
 
