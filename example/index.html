@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Demo BrowserNotif.JS</title>
+</head>
+<body>
+	<script src="../browser-notif.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+		browserNotif.config({
+			icon: 'indosystem.png'
+		})
+		.requestPermission(function(permission) {
+			if ('granted' === permission) {
+				setTimeout(function () {
+					browserNotif.notify('First Notif', 'Today is your due date task!', function() {
+									console.log('First Notif fired!')
+								})
+								.onClick(() => {window.open('https://www.indosystem.com')});
+				}, 1000);
+
+				setTimeout(function () {
+					browserNotif.config({icon: 'loket.png'})
+								.notify('Second Notif', 'Your ticket booking will be expired in 5 minutes.', function() {
+									console.log('Second Notif fired!')
+								})
+								.onClick(() => {window.open('https://www.loket.com')});
+				}, 3500);
+			}
+		})
+	</script>
+</body>
+</html>
