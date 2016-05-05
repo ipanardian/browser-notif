@@ -1,0 +1,6 @@
+{
+  "name": "BrowserNotif.JS",
+  "tagline": "Lets a web page or app send notifications that are displayed outside the page at the system level",
+  "body": "### Instruction Demo Page\r\n1. Click allow on pop-up request notification permission\r\n2. Wait one second and first notification will appear\r\n3. Switch to another app and wait about three second\r\n4. Second notification will appear\r\n5. You can click on the notification\r\n6. If notification did not show, check console find error message then create an issue",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
