@@ -12,7 +12,7 @@
   <body>
     <section class="page-header">
       <h1 class="project-name">BrowserNotif.JS</h1>
-      <h2 class="project-tagline">Lets a web page or app send notifications that are displayed outside the page at the system level</h2>
+      <h2 class="project-tagline">Lets a web page send notifications that are displayed outside the page at the system level</h2>
       <a href="https://github.com/ipanardian/browser-notif" class="btn">View on GitHub</a>
       <a href="https://github.com/ipanardian/browser-notif/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/ipanardian/browser-notif/tarball/master" class="btn">Download .tar.gz</a>
@@ -23,12 +23,12 @@
 <a id="instruction-demo-page" class="anchor" href="#instruction-demo-page" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Instruction Demo Page</h3>
 
 <ol>
-<li>Click allow on pop-up request notification permission</li>
+<li><a href="javascript:void(0)" id="requestPermission">Click here</a> to request notification permission, click allow</li>
 <li>Wait one second and first notification will appear</li>
 <li>Switch to another app and wait about three second</li>
 <li>Second notification will appear</li>
 <li>You can click on the notification</li>
-<li>If notification did not show, check console find error message then create an issue</li>
+<li>If notification did not show, check console, find the error message then create an issue</li>
 </ol>
 
       <footer class="site-footer">
@@ -39,6 +39,27 @@
 
     </section>
 
-  
+    <script src="browser-notif.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+    document.getElementById('requestPermission').addEventListener('click', () => {
+      browserNotif.config({
+        icon: 'indosystem.png'
+      })
+      .requestPermission(function(permission) {
+        if ('granted' === permission) {
+          setTimeout(function () {
+            browserNotif.notify('First Notif', 'Indosystem Build Technology for The Better World', () => console.log('First Notif fired!'))
+                  .onClick(() => window.open('https://www.indosystem.com'));
+          }, 1000);
+
+          setTimeout(function () {
+            browserNotif.config({icon: 'loket.png'})
+                  .notify('Second Notif', 'Your ticket booking will be expired in 5 minutes.', () => console.log('Second Notif fired!'))
+                  .onClick(() => window.open('https://www.loket.com'));
+          }, 3500);
+        }
+      })
+    })
+    </script>
   </body>
 </html>
