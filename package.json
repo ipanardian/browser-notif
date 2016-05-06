@@ -1,0 +1,27 @@
+{
+  "name": "browser-notif",
+  "version": "1.0.0",
+  "description": "Lets a web page send notifications that are displayed outside the page at the system level",
+  "main": "browser-notif.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipanardian/browser-notif.git"
+  },
+  "keywords": [
+    "notification",
+    "web",
+    "browser"
+  ],
+  "author": "Ipan Ardian <ipan.software@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ipanardian/browser-notif/issues"
+  },
+  "homepage": "https://github.com/ipanardian/browser-notif#readme"
+}

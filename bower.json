@@ -1,0 +1,23 @@
+{
+  "name": "browser-notif",
+  "main": "browser-notif.js",
+  "homepage": "https://github.com/ipanardian/browser-notif",
+  "authors": [
+    "ipanardian <ipan.software@gmail.com>"
+  ],
+  "description": "Lets a web page send notifications that are displayed outside the page at the system level",
+  "keywords": [
+    "Notification",
+    "browser",
+    "web",
+    "alert"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
