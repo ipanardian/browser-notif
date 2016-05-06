@@ -2,7 +2,7 @@
 *  BrowserNotif.JS
 *  (c) 2016 Ipan Ardian
 *
-*  Lets a web page or app send notifications that are displayed outside the page at the system level. 
+*  Lets a web page send notifications that are displayed outside the page at the system level. 
 *  This lets web apps send information to a user even if the application is idle, in the background, switched tabs or moved to a different app.
 *  For details, see the web site: https://github.com/ipanardian/browser-notif
 *  The MIT License

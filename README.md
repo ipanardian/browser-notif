@@ -30,8 +30,13 @@ browserNotif.config({
 browserNotif.notify('First Notif', 'Today is your due date task!')
 
 // with callback and onClick event
-browserNotif.notify('First Notif', 'Today is your due date task!', () => console.log('First Notif fired!'))
+browserNotif.notify('First Notif', 'Indosystem Build Technology for The Better World', () => console.log('First Notif fired!'))
 			.onClick(() => window.open('https://www.indosystem.com'));
+
+// override configuration
+browserNotif.config({icon: 'loket.png'})
+			.notify('Second Notif', 'Your ticket booking will be expired in 5 minutes.', () => console.log('Second Notif fired!'))
+			.onClick(() => window.open('https://www.loket.com'));
 
 // Create another instance
 myNotif = Object.create(browserNotif)
