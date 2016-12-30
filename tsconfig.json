@@ -1,0 +1,12 @@
+{
+    "files": [
+        "src/BrowserNotif.ts"
+    ],
+    "compileOnSave": false,
+    "compilerOptions": {
+        "module": "es6",
+        "target": "es6",
+        "noImplicitAny": true,
+        "sourceMap": false
+    }
+}

@@ -39,26 +39,29 @@
 
     </section>
 
-    <script src="../browser-notif.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../dist/BrowserNotif.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
-    document.getElementById('requestPermission').addEventListener('click', () => {
-      browserNotif.config({
-        icon: 'indosystem.png'
-      })
-      .requestPermission(function(permission) {
-        if ('granted' === permission) {
-          setTimeout(function () {
-            browserNotif.notify('First Notif', 'Indosystem Build Technology for The Better World', () => console.log('First Notif fired!'))
-                  .onClick(() => window.open('https://www.indosystem.com'));
-          }, 1000);
+    var notif1 = new BrowserNotif({icon: 'indosystem.png', timeout: 10})
+    var notif2 = new BrowserNotif({icon: 'loket.png', timeout: 13})
+    
+    document.getElementById('requestPermission').addEventListener('click', function() {
+        notif1   
+            .notify('First Notif', 'Indosystem Build Technology for The Better World', function(notif) {
+                console.log(notif.title +' fired!')
+            })
+            .click(function() {
+                window.open('https://www.indosystem.com')
+            })
 
-          setTimeout(function () {
-            browserNotif.config({icon: 'loket.png'})
-                  .notify('Second Notif', 'Your ticket booking will be expired in 5 minutes.', () => console.log('Second Notif fired!'))
-                  .onClick(() => window.open('https://www.loket.com'));
-          }, 3500);
-        }
-      })
+        setTimeout(function() {
+            notif2
+                .notify('Second Notif', 'Your ticket booking will be expired in 5 minutes.', function(notif) { 
+                    console.log(notif.title +' fired!')
+                })
+                .click(function() {
+                    window.open('https://www.loket.com')
+                })
+        }, 2000);
     })
     </script>
   </body>
