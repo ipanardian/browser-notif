@@ -1,4 +1,7 @@
 {
+    "files": [
+        "src/browser-notif.ts"
+    ],
     "compileOnSave": true,
     "compilerOptions": {
         "module": "es6",

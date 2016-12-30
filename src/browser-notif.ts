@@ -47,7 +47,7 @@ interface BrowserNotifInterface {
     error(callback: () => void): BrowserNotif
 }
 
-class BrowserNotif implements BrowserNotifInterface  
+export default class BrowserNotif implements BrowserNotifInterface  
 {
     /**
      * Title notification
@@ -82,6 +82,7 @@ class BrowserNotif implements BrowserNotifInterface
     /**
      * BrowserNotif constructor
      * @param  {BrowserNotifConfig} configs Optional config in object literal form
+     * e.g {icon: 'image.png', timeout: 10}
      */
     constructor (configs?: BrowserNotifConfig) {
         if (configs) {
@@ -144,7 +145,7 @@ class BrowserNotif implements BrowserNotifInterface
      * @param  {Event}  callback 
      * @return {BrowserNotif}          
      */
-    public notify(title: string, body: string, callback: (notif: Notification) => void): BrowserNotif {
+    public notify(title: string, body: string, callback?: (notif: Notification) => void): BrowserNotif {
         if (!BrowserNotif.isSupported()) {
             return this
         }
@@ -173,7 +174,7 @@ class BrowserNotif implements BrowserNotifInterface
      * @param  {Notification} callback
      * @return {[type]}
      */
-    protected _notify(callback: (notif: Notification) => void): void {
+    protected _notify(callback?: (notif: Notification) => void): void {
         this.notification = new Notification(this.title, this.options)
         this._closeNotification()
         if (typeof callback === 'function') {
