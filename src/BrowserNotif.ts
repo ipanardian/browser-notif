@@ -8,9 +8,9 @@
 *  The MIT License
 */
 
-/// <reference path='notification.d.ts' />
+/// <reference path='Notification.d.ts' />
 
-'use strict';
+"use strict";
 
 /**
  * Interface for BrowserNotif configuration
@@ -48,7 +48,7 @@ interface BrowserNotifInterface {
     error(callback: () => void): BrowserNotif
 }
 
-export default class BrowserNotif implements BrowserNotifInterface  
+class BrowserNotif implements BrowserNotifInterface  
 {
     /**
      * Title notification
@@ -188,7 +188,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _closeNotification(): void {
         if (this.timeout > 0 && this.notification instanceof Notification) {
-            setTimeout(this.notification.close.bind(this.notification), this.timeout * 1000);
+            setTimeout(this.notification.close.bind(this.notification), this.timeout * 1e3);
         }
     }
     

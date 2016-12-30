@@ -1,4 +1,4 @@
 node_modules/
 .vscode
-browser-notif.js
-browser-notif.min.js
+src/browser-notif.js
+example/
