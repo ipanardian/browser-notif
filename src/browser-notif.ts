@@ -32,7 +32,8 @@
  * actions?: NotificationAction[]
  * timeout?: number
  */
-interface BrowserNotifConfig extends NotificationOptions {
+interface BrowserNotifOptions extends NotificationOptions {
+    [key: string]: any
     timeout?: number
 }
 
@@ -63,15 +64,15 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * BrowserNotif configuration
-     * @type {BrowserNotifConfig}
+     * @type {BrowserNotifOptions}
      */
-    protected configs: BrowserNotifConfig = {}
+    protected options: BrowserNotifOptions = {}
     
     /**
      * Notification Options
      * @type {NotificationOptions}
      */
-    protected options: NotificationOptions = {}
+    protected notifOptions: NotificationOptions = {}
     
     /**
      * How long notification will appear in second. Set to 0 to make always visible
@@ -81,18 +82,18 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * BrowserNotif constructor
-     * @param  {BrowserNotifConfig} configs Optional config in object literal form
+     * @param  {BrowserNotifOptions} options Optional config in object literal form
      * e.g {icon: 'image.png', timeout: 10}
      */
-    constructor (configs?: BrowserNotifConfig) {
-        if (configs) {
-            Object.assign(this.configs, configs)
+    constructor (options?: BrowserNotifOptions) {
+        if (options) {
+            Object.assign(this.options, options)
         }
         
-        this._setOptions(this.configs)
+        this._setOptions(this.options)
         
-        if (configs.timeout) {
-            this.timeout = configs.timeout
+        if (options.timeout) {
+            this.timeout = options.timeout
         }
         
         if (!BrowserNotif.isSupported()) {
@@ -114,12 +115,12 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * Set notification options
-     * @param {BrowserNotifConfig} configs
+     * @param {BrowserNotifOptions} options
      */
-    protected _setOptions(configs: BrowserNotifConfig): void {
-        for (let config in configs) {
-            if (['timeout'].indexOf(config) == -1) {
-                this.options[config] = configs[config]
+    protected _setOptions(options: BrowserNotifOptions): void {
+        for (let option in options) {
+            if (['timeout'].indexOf(option) == -1) {
+                this.notifOptions[option] = options[option]
             }
         }
     }
@@ -151,7 +152,7 @@ export default class BrowserNotif implements BrowserNotifInterface
         }
         
         this.title = title;
-        this.options.body = body;
+        this.notifOptions.body = body;
         if ("granted" === Notification.permission) {
             this._notify(callback);
         }
@@ -175,7 +176,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @return {[type]}
      */
     protected _notify(callback?: (notif: Notification) => void): void {
-        this.notification = new Notification(this.title, this.options)
+        this.notification = new Notification(this.title, this.notifOptions)
         this._closeNotification()
         if (typeof callback === 'function') {
             callback.call(this, this.notification);

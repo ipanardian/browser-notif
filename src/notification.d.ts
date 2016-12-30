@@ -7,6 +7,7 @@ interface NotificationPermissionCallback {
 }
 
 interface NotificationOptions {
+	[key: string]: any
 	dir?: NotificationDirection;
 	lang?: string;
 	body?: string;

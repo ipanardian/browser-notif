@@ -2,11 +2,11 @@
     "files": [
         "src/browser-notif.ts"
     ],
-    "compileOnSave": true,
+    "compileOnSave": false,
     "compilerOptions": {
         "module": "es6",
         "target": "es6",
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "sourceMap": false
     }
 }
