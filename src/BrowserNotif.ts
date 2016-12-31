@@ -48,6 +48,15 @@ interface BrowserNotifInterface {
     error(callback: () => void): BrowserNotif
 }
 
+/**
+ * Interface for Permission 
+ */
+interface PermissionInterface {
+    Default: string
+    Granted: string,
+    Denied: string
+}
+
 class BrowserNotif implements BrowserNotifInterface  
 {
     /**
@@ -78,7 +87,17 @@ class BrowserNotif implements BrowserNotifInterface
      * How long notification will appear in second. Set to 0 to make always visible
      * @type {number}
      */
-    protected timeout: number = 0 
+    protected timeout: number = 0
+    
+    /**
+     * Permission Type
+     * @type {PermissionInterface}
+     */
+    readonly Permission: PermissionInterface = {
+        Default: 'default',
+        Granted: 'granted',
+        Denied: 'denied'
+    } 
     
     /**
      * BrowserNotif constructor
@@ -153,12 +172,12 @@ class BrowserNotif implements BrowserNotifInterface
         
         this.title = title;
         this.notifOptions.body = body;
-        if ("granted" === Notification.permission) {
+        if (this.Permission.Granted === Notification.permission) {
             this._notify(callback);
         }
-        else if ('denied' !== Notification.permission) {
+        else if (this.Permission.Denied !== Notification.permission) {
             this.requestPermission(permission => {
-                if ("granted" === permission) {
+                if (this.Permission.Granted === permission) {
                     this._notify(callback);
                 }
             });
