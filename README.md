@@ -58,6 +58,7 @@ Check 'dist' folder.
 - BrowserNotif.min.js.map
 
 ## Browser compatibility
+If browser not support Notification API then native alert will be triggered.
 <div id="compat-desktop" style="display: block;">
 <table class="compat-table">
  <tbody>
