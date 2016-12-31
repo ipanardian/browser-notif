@@ -13,6 +13,9 @@ This lets web apps send information to a user even if the application is idle, i
 
 ## Usage 
 ```js
+//If you want to explicitly call request permission. Usually this is only called once.
+BrowserNotif.requestPermission(p => console.log(p))
+
 // Create instance
 let notif1 = new BrowserNotif()
 

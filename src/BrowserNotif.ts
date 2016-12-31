@@ -41,7 +41,7 @@ interface BrowserNotifOptions extends NotificationOptions {
  * Interface for BrowserNotif
  */
 interface BrowserNotifInterface {
-    requestPermission(callback: (ev: string) => void): BrowserNotif
+    // requestPermission(callback: (ev: string) => void): BrowserNotif
     notify(title: string, body: string, callback: (notif: Notification) => void): BrowserNotif
     click(callback: () => void): BrowserNotif
     close(): void
@@ -149,13 +149,12 @@ class BrowserNotif implements BrowserNotifInterface
      * @param  {string} callback 
      * @return {BrowserNotif}          
      */
-    public requestPermission(callback: (permission: NotificationPermission) => void): BrowserNotif {
+    public static requestPermission(callback: (permission: NotificationPermission) => void): void {
         Notification.requestPermission((permission: NotificationPermission) => {
             if (typeof callback === 'function') {
                 callback.call(this, permission);
             }
         });
-        return this;
     }
     
     /**
@@ -166,7 +165,7 @@ class BrowserNotif implements BrowserNotifInterface
      * @return {BrowserNotif}          
      */
     public notify(title: string, body: string, callback?: (notif: Notification) => void): BrowserNotif {
-        if (BrowserNotif.isSupported()) {
+        if (!BrowserNotif.isSupported()) {
             alert(`${title}\n\n${body}`)
             return this
         }
@@ -177,7 +176,7 @@ class BrowserNotif implements BrowserNotifInterface
             this._notify(callback);
         }
         else if (this.Permission.Denied !== Notification.permission) {
-            this.requestPermission(permission => {
+            BrowserNotif.requestPermission(permission => {
                 if (this.Permission.Granted === permission) {
                     this._notify(callback);
                 }
