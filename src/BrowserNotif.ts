@@ -166,7 +166,8 @@ class BrowserNotif implements BrowserNotifInterface
      * @return {BrowserNotif}          
      */
     public notify(title: string, body: string, callback?: (notif: Notification) => void): BrowserNotif {
-        if (!BrowserNotif.isSupported()) {
+        if (BrowserNotif.isSupported()) {
+            alert(`${title}\n\n${body}`)
             return this
         }
         
