@@ -12,30 +12,60 @@ This lets web apps send information to a user even if the application is idle, i
 [http://ipanardian.github.io/browser-notif](http://ipanardian.github.io/browser-notif)
 
 ## Usage 
+### Typescript
 ```js
-//If you want to explicitly call request permission. Usually this is only called once.
+// Import module
+import BrowserNotif from './BrowserNotif'
+
+// If you want to explicitly call request permission. Usually this is only called once.
 BrowserNotif.requestPermission(p => console.log(p))
 
 // Create instance
 let notif1 = new BrowserNotif()
 
 notif1
-		.notify('First Notif', 'Hai there! Nice to meet you.', (n) => console.log('First Notif fired!'))
-		.click(() => window.open('https://www.ipanardian.com'))
+		.notify('First Notif', 'Hai there! Nice to meet you.', (n) => {
+			console.log('First Notif fired!', n)
+		})
+		.click(() => { 
+			window.open('https://www.ipanardian.com')
+		})
 
 // With options
 let notif2 = new BrowserNotif({
 	icon: 'icon.png',
 	lang: 'en-US',
-	timeout: 10 // How long notif will appear in second
+	timeout: 10 // How long notif will appear in seconds
 })	
 
 notif2 	
-		.notify('Second Notif', 'Typescript has released new version, chek it out!', (n) => console.log('Second Notif fired!'))
-		.click(() => window.open('https://www.typescriptlang.org'))
+		.notify('Second Notif', 'Typescript has released new version, chek it out!', (n) => {
+			console.log('Second Notif fired!', n)
+		})
+		.click(() => { 
+			window.open('https://www.typescriptlang.org')
+		})
 		
 //close notif pragmatically
 notif1.close()			
+```
+
+### Javascript
+In Javascript module is transpiled by Babel into UMD module pattern. Also used Polyfill for ```Object.assign```.
+```js
+BrowserNotif.default.requestPermission(function(p) {
+	console.log(p)
+})
+
+var notif = new BrowserNotif.default({icon: 'icon.png'})
+
+notif
+		.notify('First Notif', 'Hai there! Nice to meet you.', function(n) {
+			console.log('First Notif fired!', n)
+		})
+		.click(function() { 
+			window.open('https://www.ipanardian.com')
+		})
 ```
 
 ## Install

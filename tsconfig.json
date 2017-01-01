@@ -1,6 +1,6 @@
 {
-    "files": [
-        "src/BrowserNotif.ts"
+    "include": [
+        "src/*"
     ],
     "compileOnSave": false,
     "compilerOptions": {

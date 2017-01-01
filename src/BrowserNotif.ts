@@ -57,7 +57,7 @@ interface PermissionInterface {
     Denied: string
 }
 
-class BrowserNotif implements BrowserNotifInterface  
+export default class BrowserNotif implements BrowserNotifInterface  
 {
     /**
      * Title notification
@@ -119,6 +119,7 @@ class BrowserNotif implements BrowserNotifInterface
             console.warn('This browser does not support system notifications');
         }
         
+        // Navigator.serviceWorker.register('sw.js')
     }
     
     /**
