@@ -8,7 +8,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var buffer = require('vinyl-buffer');
 var tsProject = ts.createProject("tsconfig.json");
 
-gulp.task("uglify", function () {
+gulp.task("build", function () {
     return tsProject.src()
         .pipe(tsProject()).js
         .pipe(babel())
@@ -26,10 +26,9 @@ gulp.task("uglify", function () {
         .pipe(gulp.dest('dist'));
 })
 
-gulp.task("build", function () {
+gulp.task("default", function () {
     return tsProject.src()
         .pipe(tsProject()).js
-        .pipe(babel())
         .pipe(gulp.dest('dist'));
 });
 

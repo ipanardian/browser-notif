@@ -49,11 +49,11 @@ npm i browser-notif
 cd browser-notif
 npm install --only=dev
 
-// Compile Typescript and Babelify
-gulp build
+// Compile Typescript only
+gulp 
 
-// If you want to minify and uglify
-gulp uglify
+// Compile Typescript, Babelify and Uglify
+gulp build
 ```
 Check 'dist' folder. 
 - BrowserNotif.js 
