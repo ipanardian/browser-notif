@@ -1,12 +1,17 @@
 {
-    "include": [
-        "src/*"
-    ],
     "compileOnSave": false,
     "compilerOptions": {
         "module": "es6",
         "target": "es6",
         "noImplicitAny": true,
         "sourceMap": false
-    }
+    },
+    "include": [
+        "src/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "typings/browser",
+        "typings/browser.d.ts"
+    ]
 }

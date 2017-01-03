@@ -9,8 +9,7 @@
 */
 
 /// <reference path='Notification.d.ts' />
-
-"use strict";
+/// <reference path='ServiceWorkerApi.d.ts' />
 
 /**
  * Interface for BrowserNotif configuration
@@ -41,7 +40,6 @@ interface BrowserNotifOptions extends NotificationOptions {
  * Interface for BrowserNotif
  */
 interface BrowserNotifInterface {
-    // requestPermission(callback: (ev: string) => void): BrowserNotif
     notify(title: string, body: string, callback: (notif: Notification) => void): BrowserNotif
     click(callback: () => void): BrowserNotif
     close(): void
@@ -118,8 +116,6 @@ export default class BrowserNotif implements BrowserNotifInterface
         if (!BrowserNotif.isSupported()) {
             console.warn('This browser does not support system notifications');
         }
-        
-        // Navigator.serviceWorker.register('sw.js')
     }
     
     /**
@@ -146,16 +142,58 @@ export default class BrowserNotif implements BrowserNotifInterface
     }
     
     /**
-     * Get request permission
+     * Register serviceWorker and Get request permission
      * @param  {string} callback 
-     * @return {BrowserNotif}          
      */
     public static requestPermission(callback: (permission: NotificationPermission) => void): void {
+        BrowserNotif._registerServiceWorker()
+        
         Notification.requestPermission((permission: NotificationPermission) => {
             if (typeof callback === 'function') {
-                callback.call(this, permission);
+                callback.call(this, permission)
             }
         });
+    }
+    
+    /**
+     * Register serviceWorker
+     * This is an experimental technology!
+     */
+    protected static _registerServiceWorker(): void {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(serviceWorkerRegistration => {
+                console.log('Service Worker is ready :', serviceWorkerRegistration)
+            })
+            .catch(e => console.warn('BrowserNotif: ', e))
+        }
+    }
+    
+    /**
+     * Show notification from serviceWorker
+     * This is an experimental technology!
+     */
+    protected _showNotifServiceWorker(callback?: () => void): void {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.showNotification(this.title, this.notifOptions).then(() => {
+                    callback.call(this)
+                })
+            })
+            .catch(e => console.error('BrowserNotif: ', e))
+        }
+    }
+    
+    protected _getNotifServiceWorker(callback: (notification: Notification) => void): void {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.getNotifications({tag: this.options.tag}).then(notifications => {
+                    if (notifications.length > 0) {
+                        callback.call(this, notifications[0])
+                    }
+                }) 
+            })
+            .catch(e => console.error('BrowserNotif: ', e))
+        }
     }
     
     /**
@@ -193,14 +231,26 @@ export default class BrowserNotif implements BrowserNotifInterface
     /**
      * Create an instance of Notification API
      * @param  {Notification} callback
-     * @return {[type]}
      */
     protected _notify(callback?: (notif: Notification) => void): void {
-        this.notification = new Notification(this.title, this.notifOptions)
-        this._closeNotification()
-        if (typeof callback === 'function') {
-            callback.call(this, this.notification);
+        if ('serviceWorker' in navigator) {
+            this._showNotifServiceWorker(() => {
+                this._getNotifServiceWorker(notification => {
+                    this.notification = notification
+                    if (typeof callback === 'function') {
+                        callback.call(this, this.notification)
+                    }
+                })
+            })
         }
+        else {
+            this.notification = new Notification(this.title, this.notifOptions)
+            this._closeNotification()
+            if (typeof callback === 'function') {
+                callback.call(this, this.notification)
+            }
+        }
+        
     }
     
     /**
