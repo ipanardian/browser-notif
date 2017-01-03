@@ -88,6 +88,12 @@ export default class BrowserNotif implements BrowserNotifInterface
     protected timeout: number = 0
     
     /**
+     * Service Worker Path. Default : sw.js
+     * @type {string}
+     */
+    protected serviceWorkerPath: string = 'sw.js'
+    
+    /**
      * Permission Type
      * @type {PermissionInterface}
      */
@@ -135,7 +141,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _setOptions(options: BrowserNotifOptions): void {
         for (let option in options) {
-            if (['timeout'].indexOf(option) == -1) {
+            if (['timeout', 'serviceWorkerPath'].indexOf(option) == -1) {
                 this.notifOptions[option] = options[option]
             }
         }
@@ -146,8 +152,6 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @param  {string} callback 
      */
     public static requestPermission(callback: (permission: NotificationPermission) => void): void {
-        BrowserNotif._registerServiceWorker()
-        
         Notification.requestPermission((permission: NotificationPermission) => {
             if (typeof callback === 'function') {
                 callback.call(this, permission)
@@ -159,9 +163,9 @@ export default class BrowserNotif implements BrowserNotifInterface
      * Register serviceWorker
      * This is an experimental technology!
      */
-    protected static _registerServiceWorker(): void {
+    protected _registerServiceWorker(): void {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').then(serviceWorkerRegistration => {
+            navigator.serviceWorker.register(this.serviceWorkerPath).then(serviceWorkerRegistration => {
                 console.log('Service Worker is ready :', serviceWorkerRegistration)
             })
             .catch(e => console.warn('BrowserNotif: ', e))
@@ -175,6 +179,9 @@ export default class BrowserNotif implements BrowserNotifInterface
     protected _showNotifServiceWorker(callback?: () => void): void {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.ready.then(registration => {
+                if (!this.notifOptions.tag) {
+                    this.notifOptions.tag = 'browserNotif_'+ Math.random().toString().substr(3, 10)
+                }
                 registration.showNotification(this.title, this.notifOptions).then(() => {
                     callback.call(this)
                 })
@@ -186,7 +193,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     protected _getNotifServiceWorker(callback: (notification: Notification) => void): void {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.ready.then(registration => {
-                registration.getNotifications({tag: this.options.tag}).then(notifications => {
+                registration.getNotifications({tag: this.notifOptions.tag}).then(notifications => {
                     if (notifications.length > 0) {
                         callback.call(this, notifications[0])
                     }
@@ -234,6 +241,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _notify(callback?: (notif: Notification) => void): void {
         if ('serviceWorker' in navigator) {
+            this._registerServiceWorker()
             this._showNotifServiceWorker(() => {
                 this._getNotifServiceWorker(notification => {
                     this.notification = notification
