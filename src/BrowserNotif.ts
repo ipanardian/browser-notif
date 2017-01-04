@@ -46,6 +46,7 @@ interface BrowserNotifInterface {
     click(callback: () => void): BrowserNotif
     close(): void
     error(callback: () => void): BrowserNotif
+    isMobile(): boolean
 }
 
 /**
@@ -205,7 +206,7 @@ export default class BrowserNotif implements BrowserNotifInterface
                 if (!this.notifOptions.tag) {
                     this.notifOptions.tag = 'browserNotif_'+ Math.random().toString().substr(3, 10)
                 }
-                if (typeof this.data != 'undefined') {
+                if (Object.keys(this.data).length > 0) {
                     this.notifOptions.data = JSON.stringify(this.data)
                 }
                 registration.showNotification(this.title, this.notifOptions).then(() => {
@@ -284,7 +285,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @param  {Notification} callback
      */
     protected _notify(callback?: (notif: Notification) => void): void {
-        if (!('Notification' in BrowserNotif.Win)) {
+        if (this.isMobile()) {
             this._registerServiceWorker()
             this._showNotifServiceWorker(() => {
                 this._getNotifServiceWorker(notification => {
@@ -292,7 +293,6 @@ export default class BrowserNotif implements BrowserNotifInterface
                     if (typeof callback === 'function') {
                         callback.call(this, this.notification)
                     }
-
                 })
             })
         }
@@ -363,5 +363,19 @@ export default class BrowserNotif implements BrowserNotifInterface
             }
         }
         return this
+    }
+    
+    /**
+     * Detect mobile device
+     * @return {boolean}
+     */
+    public isMobile(): boolean {
+        let mobileExp: RegExp = new RegExp(`
+                                    Android|webOS|iPhone|iPad|
+                                    BlackBerry|Windows Phone|
+                                    Opera Mini|IEMobile|Mobile`, 
+                                'i');
+        
+        return mobileExp.test(navigator.userAgent)
     }
 }
