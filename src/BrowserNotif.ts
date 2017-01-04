@@ -321,10 +321,10 @@ export default class BrowserNotif implements BrowserNotifInterface
     public click(callback: () => void): BrowserNotif {
         if (typeof callback === 'function' && this.notification instanceof Notification) {
             this.notification.onclick = () => {
+                this.notification.close()
                 callback.call(this);
             }
         }
-        this.notification.close()
         return this
     }
     
