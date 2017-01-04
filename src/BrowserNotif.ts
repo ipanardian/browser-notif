@@ -30,10 +30,12 @@
  * data?: any;
  * actions?: NotificationAction[]
  * timeout?: number
+ * serviceWorkerPath?: string
  */
 interface BrowserNotifOptions extends NotificationOptions {
     [key: string]: any
     timeout?: number
+    serviceWorkerPath?: string
 }
 
 /**
@@ -66,7 +68,7 @@ interface Data {
 export default class BrowserNotif implements BrowserNotifInterface  
 {
     /**
-     * Title notification
+     * Title of Notification
      * @type {string}
      */
     protected title: string
@@ -125,7 +127,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * BrowserNotif constructor
-     * @param  {BrowserNotifOptions} options Optional config in object literal form
+     * @param  {BrowserNotifOptions} options Optional options in object literal form
      * e.g {icon: 'image.png', timeout: 10}
      */
     constructor (options?: BrowserNotifOptions) {
