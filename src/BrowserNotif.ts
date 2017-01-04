@@ -279,7 +279,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @param  {Notification} callback
      */
     protected _notify(callback?: (notif: Notification) => void): void {
-        if (!this.isMobile()) {
+        if (this.isMobile()) {
             this._registerServiceWorker()
             this._showNotifServiceWorker(() => {
                 this._getNotifServiceWorker(notification => {
