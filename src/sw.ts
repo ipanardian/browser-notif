@@ -26,7 +26,7 @@ self.onnotificationclick = function(event) {
         throw new Error('BrowserNotif: Error parse '+ error)
       }
       try {
-        if (data !== null && !data.clickOnServiceWorker) {
+        if (data !== null && data.clickOnServiceWorker !== undefined) {
           Function("(" +data['clickOnServiceWorker']+ ")()")()   
         }
       } catch (error) {
