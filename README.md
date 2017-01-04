@@ -24,7 +24,7 @@ BrowserNotif.requestPermission(p => console.log(p))
 let notif1 = new BrowserNotif()
 
 notif1
-		.notify('First Notif', 'Hai there! Nice to meet you.', (n) => {
+		.notify('First Notif', 'Hi there! Nice to meet you.', (n) => {
 			console.log('First Notif fired!', n)
 		})
 		.click(() => { 
@@ -60,11 +60,27 @@ BrowserNotif.default.requestPermission(function(p) {
 var notif = new BrowserNotif.default({icon: 'icon.png'})
 
 notif
-		.notify('First Notif', 'Hai there! Nice to meet you.', function(n) {
+		.notify('First Notif', 'Hi there! Nice to meet you.', function(n) {
 			console.log('First Notif fired!', n)
 		})
 		.click(function() { 
 			window.open('https://www.ipanardian.com')
+		})
+```
+
+## Notification On Mobile Devices
+Notification on mobile devices is using ```Service Worker```. A service worker is an event-driven worker registered against an origin and a path. Service worker runs in the background and only run over HTTPS.
+
+> Put file 'sw.js' on root directory
+
+```js
+var notif = new BrowserNotif.default({icon: 'icon.png'})
+notif
+		.clickOnServiceWorker(function(){
+              		clients.openWindow('//ipanardian.com')
+            	})
+		.notify('Notif from Ipan Ardian', 'Hi there! Nice to meet you.', function(n) {
+			console.log(n)
 		})
 ```
 
@@ -89,9 +105,12 @@ Check 'dist' folder.
 - BrowserNotif.js 
 - BrowserNotif.min.js 
 - BrowserNotif.min.js.map
+- sw.js
 
 ## Browser compatibility
 If browser not support Notification API then native alert will be triggered.
+
+### Desktop
 <div id="compat-desktop" style="display: block;">
 <table class="compat-table">
  <tbody>
@@ -210,6 +229,138 @@ If browser not support Notification API then native alert will be triggered.
  </tbody>
 </table>
 </div>
+
+### Mobile
+<div id="compat-mobile" style="display: block;">
+<table class="compat-table"><tbody><tr><th>Feature</th>
+   <th>Android</th>
+   <th>Android Webview</th>
+   <th>Edge</th>
+   <th>Firefox Mobile (Gecko)</th>
+   <th>Firefox OS</th>
+   <th>IE Mobile</th>
+   <th>Opera Mobile</th>
+   <th>Safari Mobile</th>
+   <th>Chrome for Android</th>
+  </tr><tr><td>Basic support</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>
+    <p><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></p>
+   </td>
+   <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+   <td>4.0<span class="inlineIndicator prefixBox prefixBoxInline" title="prefix"><a href="/en-US/docs/Web/Guide/Prefixes" title="The name of this feature is prefixed with 'moz' as this browser considers it experimental">moz</a></span><sup>[2]</sup><br>
+    22</td>
+   <td>1.0.1<span class="inlineIndicator prefixBox prefixBoxInline" title="prefix"><a href="/en-US/docs/Web/Guide/Prefixes" title="The name of this feature is prefixed with 'moz' as this browser considers it experimental">moz</a></span><sup>[2]</sup><br>
+    1.2</td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td>
+    <p><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></p>
+   </td>
+  </tr><tr><td><code>icon</code></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>4.0<span class="inlineIndicator prefixBox prefixBoxInline" title="prefix"><a href="/en-US/docs/Web/Guide/Prefixes" title="The name of this feature is prefixed with 'moz' as this browser considers it experimental">moz</a></span><sup>[2]</sup><br>
+    22</td>
+   <td>1.0.1<span class="inlineIndicator prefixBox prefixBoxInline" title="prefix"><a href="/en-US/docs/Web/Guide/Prefixes" title="The name of this feature is prefixed with 'moz' as this browser considers it experimental">moz</a></span><sup>[2]</sup><br>
+    1.2</td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+  </tr><tr><td>Available in workers</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>41.0 (41.0)</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+  </tr><tr><td><code>silent</code></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td>43.0</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td>43.0</td>
+  </tr><tr><td><code>noscreen</code>, <code>sticky</code></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+  </tr><tr><td><code>sound</code></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span title="Please update this with the earliest version of support." style="color: #888;">(Yes)</span></td>
+  </tr><tr><td><code>renotify</code></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td>50.0</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+  </tr><tr><td>Promise-based <code>Notification.requestPermission()</code></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>47.0 (47.0)</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+  </tr><tr><td><code>vibrate</code>, <code>actions</code></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td>53.0</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>&nbsp;</td>
+   <td>&nbsp;</td>
+   <td>&nbsp;</td>
+   <td>39</td>
+   <td>&nbsp;</td>
+   <td>53.0</td>
+  </tr><tr><td><code>badge</code></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td>53.0</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>&nbsp;</td>
+   <td>&nbsp;</td>
+   <td>&nbsp;</td>
+   <td>39</td>
+   <td>&nbsp;</td>
+   <td>53.0</td>
+  </tr><tr><td><code>image</code></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span style="color: #f00;">No&nbsp;support</span></td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>&nbsp;</td>
+   <td>&nbsp;</td>
+   <td>&nbsp;</td>
+   <td><span title="Compatibility unknown; please update this." style="color: rgb(255, 153, 0);">?</span></td>
+   <td>&nbsp;</td>
+   <td>55.0</td>
+  </tr></tbody></table></div>
 
 ## License
 The MIT License (MIT)
