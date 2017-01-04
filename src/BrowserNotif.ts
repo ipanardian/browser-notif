@@ -55,6 +55,14 @@ interface PermissionInterface {
     Denied: string
 }
 
+/**
+ * Interface for Data
+ */
+interface Data {
+    [key: string]: any
+    clickOnServiceWorker?: string
+}
+
 export default class BrowserNotif implements BrowserNotifInterface  
 {
     /**
@@ -80,6 +88,12 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @type {NotificationOptions}
      */
     protected notifOptions: NotificationOptions = {}
+
+    /**
+     * Arbitrary data
+     * @type {Data}
+     */
+    protected data: Data = {}
     
     /**
      * How long notification will appear in second. Set to 0 to make always visible
@@ -88,10 +102,10 @@ export default class BrowserNotif implements BrowserNotifInterface
     protected timeout: number = 0
     
     /**
-     * Service Worker Path. Default : sw.js
+     * Service Worker Path. Default : sw.min.js
      * @type {string}
      */
-    protected serviceWorkerPath: string = 'sw.js'
+    protected serviceWorkerPath: string = 'sw.min.js'
     
     /**
      * Permission Type
@@ -101,7 +115,13 @@ export default class BrowserNotif implements BrowserNotifInterface
         Default: 'default',
         Granted: 'granted',
         Denied: 'denied'
-    } 
+    }
+
+    /**
+     * Readonly Win property
+     * @type {Window}
+     */
+    protected static readonly Win: Window = window
     
     /**
      * BrowserNotif constructor
@@ -129,7 +149,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @return {boolean} 
      */
     public static isSupported(): boolean {
-        if (!("Notification" in window)) {
+        if (!("Notification" in BrowserNotif.Win)) {
             return false
         }
         return true
@@ -175,12 +195,16 @@ export default class BrowserNotif implements BrowserNotifInterface
     /**
      * Show notification from serviceWorker
      * This is an experimental technology!
+     * @param  {()}      callback
      */
     protected _showNotifServiceWorker(callback?: () => void): void {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.ready.then(registration => {
                 if (!this.notifOptions.tag) {
                     this.notifOptions.tag = 'browserNotif_'+ Math.random().toString().substr(3, 10)
+                }
+                if (typeof this.data != 'undefined') {
+                    this.notifOptions.data = JSON.stringify(this.data)
                 }
                 registration.showNotification(this.title, this.notifOptions).then(() => {
                     callback.call(this)
@@ -190,6 +214,10 @@ export default class BrowserNotif implements BrowserNotifInterface
         }
     }
     
+    /**
+     * Get notification object from serviceWorker
+     * @param  {Notification} callback
+     */
     protected _getNotifServiceWorker(callback: (notification: Notification) => void): void {
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.ready.then(registration => {
@@ -215,9 +243,10 @@ export default class BrowserNotif implements BrowserNotifInterface
             alert(`${title}\n\n${body}`)
             return this
         }
+        this._validateTitle(title)
         
-        this.title = title;
-        this.notifOptions.body = body;
+        this.title              = title;
+        this.notifOptions.body  = body;
         if (this.Permission.Granted === Notification.permission) {
             this._notify(callback);
         }
@@ -236,11 +265,24 @@ export default class BrowserNotif implements BrowserNotifInterface
     }
     
     /**
+     * Validate title of Notification
+     * @param {string} title
+     */
+    protected _validateTitle(title: string): void {
+        if (typeof title != 'string') {
+            throw new Error('BrowserNotif: Title of notification must be a string');
+        }
+        else if (title.trim() == '') {
+            throw new Error('BrowserNotif: Title of notification could not be empty');
+        }
+    }
+    
+    /**
      * Create an instance of Notification API
      * @param  {Notification} callback
      */
     protected _notify(callback?: (notif: Notification) => void): void {
-        if ('serviceWorker' in navigator) {
+        if (!('Notification' in BrowserNotif.Win)) {
             this._registerServiceWorker()
             this._showNotifServiceWorker(() => {
                 this._getNotifServiceWorker(notification => {
@@ -248,6 +290,7 @@ export default class BrowserNotif implements BrowserNotifInterface
                     if (typeof callback === 'function') {
                         callback.call(this, this.notification)
                     }
+
                 })
             })
         }
@@ -280,6 +323,19 @@ export default class BrowserNotif implements BrowserNotifInterface
             this.notification.onclick = () => {
                 callback.call(this);
             }
+        }
+        this.notification.close()
+        return this
+    }
+    
+    /**
+     * Click event on serviceWorker Notification
+     * @param  {}  callback
+     * @return {BrowserNotif}
+     */
+    public clickOnServiceWorker(callback: () => void): BrowserNotif {
+        if (typeof callback === 'function') {
+            this.data.clickOnServiceWorker = callback.toString()
         }
         return this
     }
