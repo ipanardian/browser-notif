@@ -23,12 +23,14 @@ self.onnotificationclick = function(event) {
       try {
         var data = JSON.parse(event.notification.data)
       } catch (error) {
-        console.error('BrowserNotif: Error parse '+ error)
+        throw new Error('BrowserNotif: Error parse '+ error)
       }
       try {
-        Function("(" +data['clickOnServiceWorker']+ ")()")()   
+        if (data !== null && !data.clickOnServiceWorker) {
+          Function("(" +data['clickOnServiceWorker']+ ")()")()   
+        }
       } catch (error) {
-        console.error('BrowserNotif: Error clickOnServiceWorker '+ error)
+        throw new Error('BrowserNotif: Error clickOnServiceWorker '+ error)
       }
     }
     event.notification.close()
