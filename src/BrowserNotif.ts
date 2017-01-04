@@ -29,8 +29,8 @@
  * requireInteraction?: boolean;
  * data?: any;
  * actions?: NotificationAction[]
- * timeout?: number
- * serviceWorkerPath?: string
+ * timeout?: number;
+ * serviceWorkerPath?: string; Default : sw.js
  */
 interface BrowserNotifOptions extends NotificationOptions {
     [key: string]: any
@@ -103,12 +103,6 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @type {number}
      */
     protected timeout: number = 0
-    
-    /**
-     * Service Worker Path. Default : sw.min.js
-     * @type {string}
-     */
-    protected serviceWorkerPath: string = 'sw.min.js'
     
     /**
      * Permission Type
@@ -188,7 +182,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _registerServiceWorker(): void {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register(this.serviceWorkerPath).then(serviceWorkerRegistration => {
+            navigator.serviceWorker.register(this.options.serviceWorkerPath || 'sw.js').then(serviceWorkerRegistration => {
                 console.log('Service Worker is ready :', serviceWorkerRegistration)
             })
             .catch(e => console.warn('BrowserNotif: ', e))
@@ -285,7 +279,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @param  {Notification} callback
      */
     protected _notify(callback?: (notif: Notification) => void): void {
-        if (this.isMobile()) {
+        if (!this.isMobile()) {
             this._registerServiceWorker()
             this._showNotifServiceWorker(() => {
                 this._getNotifServiceWorker(notification => {
