@@ -83,6 +83,7 @@ notif
 			console.log(n)
 		})
 ```
+![gif](http://i.giphy.com/l3vRfm7aebpZjQHf2.gif)
 
 ## Install
 ```
