@@ -14,7 +14,7 @@ This lets web apps send information to a user even if the application is idle, i
 ## Usage 
 ### Typescript
 ```js
-// Import module
+// Import
 import BrowserNotif from './BrowserNotif'
 
 // If you want to explicitly call request permission. Usually this is only called once.
@@ -51,7 +51,7 @@ notif1.close()
 ```
 
 ### Javascript
-In Javascript module is transpiled by Babel into UMD module pattern. Also used Polyfill for ```Object.assign```.
+In Javascript BrowserNotif use UMD module pattern and Polyfill for ```Object.assign```.
 ```js
 BrowserNotif.default.requestPermission(function(p) {
 	console.log(p)
