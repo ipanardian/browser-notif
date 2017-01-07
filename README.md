@@ -6,7 +6,12 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-red.svg)](https://raw.githubusercontent.com/ipanardian/browser-notif/master/LICENSE)
 
 Lets a web page send notifications that are displayed outside the page at the system level. 
-This lets web apps send information to a user even if the application is idle, in the background, switched tabs or moved to a different app.   
+This lets web apps send information to a user even if the application is idle, in the background, switched tabs or moved to a different app.  
+
+## Install
+```
+npm install browser-notif --save
+```
 
 ## Demo
 [http://ipanardian.github.io/browser-notif](http://ipanardian.github.io/browser-notif)
@@ -84,11 +89,6 @@ notif
 		})
 ```
 ![gif](http://i.giphy.com/l3vRfm7aebpZjQHf2.gif)
-
-## Install
-```
-npm i browser-notif
-```
 
 ## Build
 ```
