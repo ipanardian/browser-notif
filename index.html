@@ -24,9 +24,8 @@
 
 <ol>
 <li><a href="javascript:void(0)" id="requestPermission">Click here</a> to request notification permission, click allow</li>
-<li>Wait one second and first notification will appear</li>
-<li>Switch to another app and wait about three second</li>
-<li>Second notification will appear</li>
+<li>Notification will be appear</li>
+<li>Switch to another app, notification will be still visible</li>
 <li>You can click on the notification</li>
 <li>Open console and type 'notif1.close()' it will close the first notification pragmatically</li>
 </ol>
@@ -41,27 +40,33 @@
 
     <script src="BrowserNotif.min.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
-    var notif1 = new BrowserNotif.default({icon: 'indosystem.png', timeout: 10})
-    var notif2 = new BrowserNotif.default({icon: 'loket.png', timeout: 13})
+    var notif1 = new BrowserNotif.default({icon: 'github.png', timeout: 6})
+    var notif2 = new BrowserNotif.default({icon: 'indosystem.png', timeout: 3})
     
     document.getElementById('requestPermission').addEventListener('click', function() {
         notif1   
-            .notify('First Notif', 'Indosystem Build Technology for The Better World', function(notif) {
-                console.log(notif.title +' fired!')
+            .clickOnServiceWorker(function(){
+              clients.openWindow('//ipanardian.com')
+            })
+            .notify('ipanardian.com', 'New open source project has been released. Check it out!', function(notif) {
+                console.log(notif)
             })
             .click(function() {
-                window.open('https://www.indosystem.com')
+                window.open('//ipanardian.com')
             })
-
+        
         setTimeout(function() {
-            notif2
-                .notify('Second Notif', 'Your ticket booking will be expired in 5 minutes.', function(notif) { 
-                    console.log(notif.title +' fired!')
-                })
-                .click(function() {
-                    window.open('https://www.loket.com')
-                })
-        }, 2000);
+           notif2
+            .clickOnServiceWorker(function(){
+              clients.openWindow('//indosystem.com')
+            })
+            .notify('Second Notif', 'Indosystem Build Technology for The Better World', function(notif) {
+                console.log(notif)
+            })
+            .click(function() {
+                window.open('//indosystem.com')
+            })
+        }, 1000);
     })
     </script>
   </body>
