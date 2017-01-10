@@ -9,8 +9,7 @@
 */
 
 /// <reference path='Notification.d.ts' />
-
-"use strict";
+/// <reference path='ServiceWorkerApi.d.ts' />
 
 /**
  * Interface for BrowserNotif configuration
@@ -30,22 +29,24 @@
  * requireInteraction?: boolean;
  * data?: any;
  * actions?: NotificationAction[]
- * timeout?: number
+ * timeout?: number;
+ * serviceWorkerPath?: string; Default : sw.js
  */
 interface BrowserNotifOptions extends NotificationOptions {
     [key: string]: any
     timeout?: number
+    serviceWorkerPath?: string
 }
 
 /**
  * Interface for BrowserNotif
  */
 interface BrowserNotifInterface {
-    // requestPermission(callback: (ev: string) => void): BrowserNotif
     notify(title: string, body: string, callback: (notif: Notification) => void): BrowserNotif
     click(callback: () => void): BrowserNotif
     close(): void
     error(callback: () => void): BrowserNotif
+    isMobile(): boolean
 }
 
 /**
@@ -57,10 +58,18 @@ interface PermissionInterface {
     Denied: string
 }
 
+/**
+ * Interface for Data
+ */
+interface Data {
+    [key: string]: any
+    clickOnServiceWorker?: string
+}
+
 export default class BrowserNotif implements BrowserNotifInterface  
 {
     /**
-     * Title notification
+     * Title of Notification
      * @type {string}
      */
     protected title: string
@@ -82,6 +91,12 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @type {NotificationOptions}
      */
     protected notifOptions: NotificationOptions = {}
+
+    /**
+     * Arbitrary data
+     * @type {Data}
+     */
+    protected data: Data = {}
     
     /**
      * How long notification will appear in second. Set to 0 to make always visible
@@ -97,11 +112,17 @@ export default class BrowserNotif implements BrowserNotifInterface
         Default: 'default',
         Granted: 'granted',
         Denied: 'denied'
-    } 
+    }
+
+    /**
+     * Readonly Win property
+     * @type {Window}
+     */
+    protected static readonly Win: Window = window
     
     /**
      * BrowserNotif constructor
-     * @param  {BrowserNotifOptions} options Optional config in object literal form
+     * @param  {BrowserNotifOptions} options Optional options in object literal form
      * e.g {icon: 'image.png', timeout: 10}
      */
     constructor (options?: BrowserNotifOptions) {
@@ -118,8 +139,6 @@ export default class BrowserNotif implements BrowserNotifInterface
         if (!BrowserNotif.isSupported()) {
             console.warn('This browser does not support system notifications');
         }
-        
-        // Navigator.serviceWorker.register('sw.js')
     }
     
     /**
@@ -127,7 +146,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @return {boolean} 
      */
     public static isSupported(): boolean {
-        if (!("Notification" in window)) {
+        if (!("Notification" in BrowserNotif.Win)) {
             return false
         }
         return true
@@ -139,23 +158,74 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _setOptions(options: BrowserNotifOptions): void {
         for (let option in options) {
-            if (['timeout'].indexOf(option) == -1) {
+            if (['timeout', 'serviceWorkerPath'].indexOf(option) == -1) {
                 this.notifOptions[option] = options[option]
             }
         }
     }
     
     /**
-     * Get request permission
+     * Register serviceWorker and Get request permission
      * @param  {string} callback 
-     * @return {BrowserNotif}          
      */
     public static requestPermission(callback: (permission: NotificationPermission) => void): void {
         Notification.requestPermission((permission: NotificationPermission) => {
             if (typeof callback === 'function') {
-                callback.call(this, permission);
+                callback.call(this, permission)
             }
         });
+    }
+    
+    /**
+     * Register serviceWorker
+     * This is an experimental technology!
+     */
+    protected _registerServiceWorker(): void {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register(this.options.serviceWorkerPath || 'sw.js').then(serviceWorkerRegistration => {
+                console.log('Service Worker is ready :', serviceWorkerRegistration)
+            })
+            .catch(e => console.warn('BrowserNotif: ', e))
+        }
+    }
+    
+    /**
+     * Show notification from serviceWorker
+     * This is an experimental technology!
+     * @param  {()}      callback
+     */
+    protected _showNotifServiceWorker(callback?: () => void): void {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                if (!this.notifOptions.tag) {
+                    this.notifOptions.tag = 'browserNotif_'+ Math.random().toString().substr(3, 10)
+                }
+                if (Object.keys(this.data).length > 0) {
+                    this.notifOptions.data = JSON.stringify(this.data)
+                }
+                registration.showNotification(this.title, this.notifOptions).then(() => {
+                    callback.call(this)
+                })
+            })
+            .catch(e => console.error('BrowserNotif: ', e))
+        }
+    }
+    
+    /**
+     * Get notification object from serviceWorker
+     * @param  {Notification} callback
+     */
+    protected _getNotifServiceWorker(callback: (notification: Notification) => void): void {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.getNotifications({tag: this.notifOptions.tag}).then(notifications => {
+                    if (notifications.length > 0) {
+                        callback.call(this, notifications[0])
+                    }
+                }) 
+            })
+            .catch(e => console.error('BrowserNotif: ', e))
+        }
     }
     
     /**
@@ -170,9 +240,10 @@ export default class BrowserNotif implements BrowserNotifInterface
             alert(`${title}\n\n${body}`)
             return this
         }
+        this._validateTitle(title)
         
-        this.title = title;
-        this.notifOptions.body = body;
+        this.title              = title;
+        this.notifOptions.body  = body;
         if (this.Permission.Granted === Notification.permission) {
             this._notify(callback);
         }
@@ -191,16 +262,45 @@ export default class BrowserNotif implements BrowserNotifInterface
     }
     
     /**
+     * Validate title of Notification
+     * @param {string} title
+     */
+    protected _validateTitle(title: string): void {
+        if (typeof title != 'string') {
+            throw new Error('BrowserNotif: Title of notification must be a string');
+        }
+        else if (title.trim() == '') {
+            throw new Error('BrowserNotif: Title of notification could not be empty');
+        }
+    }
+    
+    /**
      * Create an instance of Notification API
      * @param  {Notification} callback
-     * @return {[type]}
      */
     protected _notify(callback?: (notif: Notification) => void): void {
-        this.notification = new Notification(this.title, this.notifOptions)
-        this._closeNotification()
-        if (typeof callback === 'function') {
-            callback.call(this, this.notification);
+        if (this.isMobile()) {
+            this._registerServiceWorker()
+            this._showNotifServiceWorker(() => {
+                this._getNotifServiceWorker(notification => {
+                    this.notification = notification
+                    if (typeof callback === 'function') {
+                        callback.call(this, this.notification)
+                    }
+                })
+            })
         }
+        else {
+            if (this.notification instanceof Notification) {
+                this.notification.close()
+            }
+            this.notification = new Notification(this.title, this.notifOptions)
+            this._closeNotification()
+            if (typeof callback === 'function') {
+                callback.call(this, this.notification)
+            }
+        }
+        
     }
     
     /**
@@ -220,8 +320,21 @@ export default class BrowserNotif implements BrowserNotifInterface
     public click(callback: () => void): BrowserNotif {
         if (typeof callback === 'function' && this.notification instanceof Notification) {
             this.notification.onclick = () => {
+                this.notification.close()
                 callback.call(this);
             }
+        }
+        return this
+    }
+    
+    /**
+     * Click event on serviceWorker Notification
+     * @param  {}  callback
+     * @return {BrowserNotif}
+     */
+    public clickOnServiceWorker(callback: () => void): BrowserNotif {
+        if (typeof callback === 'function') {
+            this.data.clickOnServiceWorker = callback.toString()
         }
         return this
     }
@@ -247,5 +360,19 @@ export default class BrowserNotif implements BrowserNotifInterface
             }
         }
         return this
+    }
+    
+    /**
+     * Detect mobile device
+     * @return {boolean}
+     */
+    public isMobile(): boolean {
+        let mobileExp: RegExp = new RegExp(`
+                                    Android|webOS|iPhone|iPad|
+                                    BlackBerry|Windows Phone|
+                                    Opera Mini|IEMobile|Mobile`, 
+                                'i');
+        
+        return mobileExp.test(navigator.userAgent)
     }
 }
