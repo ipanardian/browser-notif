@@ -291,6 +291,9 @@ export default class BrowserNotif implements BrowserNotifInterface
             })
         }
         else {
+            if (this.notification instanceof Notification) {
+                this.notification.close()
+            }
             this.notification = new Notification(this.title, this.notifOptions)
             this._closeNotification()
             if (typeof callback === 'function') {
