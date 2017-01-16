@@ -166,7 +166,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * Register serviceWorker and Get request permission
-     * @param  {string} callback 
+     * @param  Promise<NotificationPermission>
      */
     public static requestPermission(): Promise<NotificationPermission> {
         return new Promise((resolve, reject) => {
@@ -193,7 +193,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     /**
      * Show notification from serviceWorker
      * This is an experimental technology!
-     * @param  {()}      callback
+     * @param  Promise<NotificationEvent>
      */
     protected _showNotifServiceWorker(): Promise<NotificationEvent> {
         return new Promise((resolve, reject) => {
@@ -221,7 +221,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * Get notification object from serviceWorker
-     * @param  {Notification} callback
+     * @param  Promise<Notification>
      */
     protected _getNotifServiceWorker(): Promise<Notification> {
         return new Promise((resolve, reject) => {
@@ -291,7 +291,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * Create an instance of Notification API
-     * @param  {Notification} callback
+     * @return {Promise<Notification>}
      */
     protected _notify(): Promise<Notification> {
         return new Promise((resolve, reject) => {
