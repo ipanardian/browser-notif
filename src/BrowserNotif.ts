@@ -195,38 +195,52 @@ export default class BrowserNotif implements BrowserNotifInterface
      * This is an experimental technology!
      * @param  {()}      callback
      */
-    protected _showNotifServiceWorker(callback?: () => void): void {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.ready.then(registration => {
-                if (!this.notifOptions.tag) {
-                    this.notifOptions.tag = 'browserNotif_'+ Math.random().toString().substr(3, 10)
-                }
-                if (Object.keys(this.data).length > 0) {
-                    this.notifOptions.data = JSON.stringify(this.data)
-                }
-                registration.showNotification(this.title, this.notifOptions).then(() => {
-                    callback.call(this)
+    protected _showNotifServiceWorker(): Promise<NotificationEvent> {
+        return new Promise((resolve, reject) => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    if (!this.notifOptions.tag) {
+                        this.notifOptions.tag = 'browserNotif_'+ Math.random().toString().substr(3, 10)
+                    }
+                    if (Object.keys(this.data).length > 0) {
+                        this.notifOptions.data = JSON.stringify(this.data)
+                    }
+                    registration.showNotification(this.title, this.notifOptions).then((notificationEvent) => {
+                        resolve(notificationEvent)
+                    })
                 })
-            })
-            .catch(e => console.error('BrowserNotif: ', e))
-        }
+                .catch(e => {
+                    throw new Error('BrowserNotif: '+ e)
+                })
+            }
+            else {
+                throw new Error('BrowserNotif: serviceWorker not available')
+            }
+        })
     }
     
     /**
      * Get notification object from serviceWorker
      * @param  {Notification} callback
      */
-    protected _getNotifServiceWorker(callback: (notification: Notification) => void): void {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.ready.then(registration => {
-                registration.getNotifications({tag: this.notifOptions.tag}).then(notifications => {
-                    if (notifications.length > 0) {
-                        callback.call(this, notifications[0])
-                    }
-                }) 
-            })
-            .catch(e => console.error('BrowserNotif: ', e))
-        }
+    protected _getNotifServiceWorker(): Promise<Notification> {
+        return new Promise((resolve, reject) => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.getNotifications({tag: this.notifOptions.tag}).then(notifications => {
+                        if (notifications.length > 0) {
+                            resolve(notifications[0])
+                        }
+                        else {
+                            reject('BrowserNotif: Notification not found')
+                        }
+                    }) 
+                })
+                .catch(e => {
+                    reject('BrowserNotif: '+ e)
+                })
+            }
+        })
     }
     
     /**
@@ -246,12 +260,12 @@ export default class BrowserNotif implements BrowserNotifInterface
         this.title              = title;
         this.notifOptions.body  = body;
         if (this.Permission.Granted === Notification.permission) {
-            this._notify(callback);
+            this._notify().then(notificaton => callback(notificaton))
         }
         else if (this.Permission.Denied !== Notification.permission) {
             BrowserNotif.requestPermission().then(permission => {
                 if (this.Permission.Granted === permission) {
-                    this._notify(callback);
+                    this._notify().then(notificaton => callback(notificaton))
                 }
             });
         }
@@ -279,29 +293,38 @@ export default class BrowserNotif implements BrowserNotifInterface
      * Create an instance of Notification API
      * @param  {Notification} callback
      */
-    protected _notify(callback?: (notif: Notification) => void): void {
-        if (this.isMobile()) {
-            this._registerServiceWorker()
-            this._showNotifServiceWorker(() => {
-                this._getNotifServiceWorker(notification => {
-                    this.notification = notification
-                    if (typeof callback === 'function') {
-                        callback.call(this, this.notification)
-                    }
+    protected _notify(): Promise<Notification> {
+        return new Promise((resolve, reject) => {
+            if (this.isMobile()) {
+                Promise.resolve().then(() => {
+                    this._registerServiceWorker()
+                    return this._showNotifServiceWorker()
+                    
                 })
-            })
-        }
-        else {
-            if (this.notification instanceof Notification) {
-                this.notification.close()
+                .then((notificationEvent) => {
+                    this._getNotifServiceWorker().then(notification => {
+                        this.notification = notification
+                        resolve(this.notification)
+                    })
+                })
+                .catch(err => {
+                    reject(err)
+                })
             }
-            this.notification = new Notification(this.title, this.notifOptions)
-            this._closeNotification()
-            if (typeof callback === 'function') {
-                callback.call(this, this.notification)
+            else {
+                Promise.resolve().then(() => {
+                    if (this.notification instanceof Notification) {
+                        this.notification.close()
+                    }
+                    this.notification = new Notification(this.title, this.notifOptions)
+                    this._closeNotification()
+                    resolve(this.notification)
+                })
+                .catch(err => {
+                    reject(err)
+                })
             }
-        }
-        
+        })
     }
     
     /**
