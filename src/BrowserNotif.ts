@@ -168,12 +168,13 @@ export default class BrowserNotif implements BrowserNotifInterface
      * Register serviceWorker and Get request permission
      * @param  {string} callback 
      */
-    public static requestPermission(callback: (permission: NotificationPermission) => void): void {
-        Notification.requestPermission((permission: NotificationPermission) => {
-            if (typeof callback === 'function') {
-                callback.call(this, permission)
-            }
-        });
+    public static requestPermission(): Promise<NotificationPermission> {
+        return new Promise((resolve, reject) => {
+            Notification.requestPermission().then((permission: NotificationPermission) => {
+                resolve(permission)
+            })
+            .catch(err => reject(err))
+        })
     }
     
     /**
@@ -248,7 +249,7 @@ export default class BrowserNotif implements BrowserNotifInterface
             this._notify(callback);
         }
         else if (this.Permission.Denied !== Notification.permission) {
-            BrowserNotif.requestPermission(permission => {
+            BrowserNotif.requestPermission().then(permission => {
                 if (this.Permission.Granted === permission) {
                     this._notify(callback);
                 }
