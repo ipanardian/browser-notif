@@ -242,7 +242,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _notify(notifEvent?: BrowserNotifEvent): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (this.isMobile()) {
+            if (!this.isMobile()) {
                 Promise.resolve().then(() => {
                     this._registerServiceWorker()
                     this._prepareClickOnServiceWorker.apply(this, [notifEvent])
@@ -302,20 +302,6 @@ export default class BrowserNotif implements BrowserNotifInterface
     }
     
     /**
-     * Click event on Notification
-     * @param  {}  callback
-     * @return {BrowserNotif}
-     */
-    private _click(callback: () => void): void {
-        if (typeof callback === 'function' && this.notification instanceof Notification) {
-            this.notification.onclick = () => {
-                this.notification.close()
-                callback.call(this);
-            }
-        }
-    }
-    
-    /**
      * Click event on serviceWorker Notification
      * @param  {}  callback
      * @return {BrowserNotif}
@@ -333,20 +319,6 @@ export default class BrowserNotif implements BrowserNotifInterface
         if (this.notification instanceof Notification) {
             this.notification.close()
         }
-    }
-    
-    /**
-     * Error of Notification
-     * @param  {}  callback
-     * @return {BrowserNotif}
-     */
-    public error(callback: () => void): BrowserNotif {
-        if (typeof callback === 'function' && this.notification instanceof Notification) {
-            this.notification.onerror = () => {
-                callback.call(this);
-            }
-        }
-        return this
     }
     
     /**
