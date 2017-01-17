@@ -54,7 +54,7 @@ interface BrowserNotifInterface {
  */
 interface PermissionInterface {
     Default: string
-    Granted: string,
+    Granted: string
     Denied: string
 }
 
