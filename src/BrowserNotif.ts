@@ -197,7 +197,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @param  {Event}  callback 
      * @return {BrowserNotif}          
      */
-    public notify(title: string, body: string, notifEvent?: BrowserNotifEvent): Promise<Notification> {
+    public notify(title: string, body: string, notifEvent?: BrowserNotifEvent): Promise<any> {
         return new Promise((resolve, reject) => {
             if (!BrowserNotif.isSupported()) {
                 alert(`${title}\n\n${body}`)
@@ -208,12 +208,12 @@ export default class BrowserNotif implements BrowserNotifInterface
             this.title              = title;
             this.notifOptions.body  = body;
             if (this.Permission.Granted === Notification.permission) {
-                this._notify(notifEvent).then(notificaton => resolve(notificaton))
+                this._notify(notifEvent).then(() => resolve())
             }
             else if (this.Permission.Denied !== Notification.permission) {
                 BrowserNotif.requestPermission().then(permission => {
                     if (this.Permission.Granted === permission) {
-                        this._notify(notifEvent).then(notificaton => resolve(notificaton))
+                        this._notify(notifEvent).then(() => resolve())
                     }
                 });
             }
@@ -240,7 +240,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * Create an instance of Notification API
      * @return {Promise<Notification>}
      */
-    protected _notify(notifEvent?: BrowserNotifEvent): Promise<Notification> {
+    protected _notify(notifEvent?: BrowserNotifEvent): Promise<any> {
         return new Promise((resolve, reject) => {
             if (this.isMobile()) {
                 Promise.resolve().then(() => {
@@ -252,7 +252,7 @@ export default class BrowserNotif implements BrowserNotifInterface
                 .then((notificationEvent) => {
                     this._getNotifServiceWorker().then(notification => {
                         this.notification = notification
-                        resolve(this.notification)
+                        resolve()
                     })
                 })
                 .catch(err => {
@@ -267,7 +267,7 @@ export default class BrowserNotif implements BrowserNotifInterface
                     this.notification = new Notification(this.title, this.notifOptions)
                     this._prepareNotifEvent.apply(this, [notifEvent])
                     this._closeNotification()
-                    resolve(this.notification)
+                    resolve()
                 })
                 .catch(err => {
                     reject(err)
