@@ -11,7 +11,7 @@
 /// <reference path='Notification.d.ts' />
 /// <reference path='ServiceWorkerApi.d.ts' />
 
-import {BrowserNotifOptions, BrowserNotifInterface, BrowserNotifEvent, PermissionInterface, Data} from './Interface'
+import {BrowserNotifOptions, BrowserNotifInterface, BrowserNotifEvent, BrowserNotifData, PermissionInterface} from './Interface'
 
 export default class BrowserNotif implements BrowserNotifInterface  
 {
@@ -43,7 +43,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      * Arbitrary data
      * @type {Data}
      */
-    protected data: Data = {}
+    protected data: BrowserNotifData = {}
     
     /**
      * How long notification will appear in second. Set to 0 to make always visible

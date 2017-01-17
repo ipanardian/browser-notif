@@ -53,9 +53,9 @@ export interface PermissionInterface {
 }
 
 /**
- * Interface for Data
+ * Interface for NotifData
  */
-export interface Data {
+export interface BrowserNotifData {
     [key: string]: any
     clickOnServiceWorker?: string
 }
