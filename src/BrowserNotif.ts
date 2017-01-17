@@ -11,60 +11,7 @@
 /// <reference path='Notification.d.ts' />
 /// <reference path='ServiceWorkerApi.d.ts' />
 
-/**
- * Interface for BrowserNotif configuration
- * 
- * dir?: NotificationDirection;
- * lang?: string;
- * body?: string;
- * tag?: string;
- * image?: string;
- * icon?: string;
- * badge?: string;
- * sound?: string;
- * vibrate?: number | number[],
- * timestamp?: number,
- * renotify?: boolean;
- * silent?: boolean;
- * requireInteraction?: boolean;
- * data?: any;
- * actions?: NotificationAction[]
- * timeout?: number;
- * serviceWorkerPath?: string; Default : sw.js
- */
-interface BrowserNotifOptions extends NotificationOptions {
-    [key: string]: any
-    timeout?: number
-    serviceWorkerPath?: string
-}
-
-/**
- * Interface for BrowserNotif
- */
-interface BrowserNotifInterface {
-    notify(title: string, body: string, callback: (notif: Notification) => void): BrowserNotif
-    click(callback: () => void): BrowserNotif
-    close(): void
-    error(callback: () => void): BrowserNotif
-    isMobile(): boolean
-}
-
-/**
- * Interface for Permission 
- */
-interface PermissionInterface {
-    Default: string
-    Granted: string
-    Denied: string
-}
-
-/**
- * Interface for Data
- */
-interface Data {
-    [key: string]: any
-    clickOnServiceWorker?: string
-}
+import {BrowserNotifOptions, BrowserNotifInterface, PermissionInterface, Data} from './Interface'
 
 export default class BrowserNotif implements BrowserNotifInterface  
 {
@@ -244,7 +191,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     }
     
     /**
-     * Trigger notify
+     * Create notify
      * @param  {string} title    
      * @param  {string} body     
      * @param  {Event}  callback 
