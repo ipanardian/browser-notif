@@ -243,7 +243,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _notify(notifEvent?: BrowserNotifEvent): Promise<any> {
         return new Promise((resolve, reject) => {
-            if (!this.isMobile()) {
+            if (this.isMobile()) {
                 Promise.resolve().then(() => {
                     this._registerServiceWorker()
                     this._prepareClickOnServiceWorker.apply(this, [notifEvent])
