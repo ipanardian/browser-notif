@@ -41,7 +41,7 @@ export default class BrowserNotif implements BrowserNotifInterface
 
     /**
      * Arbitrary data
-     * @type {Data}
+     * @type {BrowserNotifData}
      */
     protected data: BrowserNotifData = {}
     
@@ -140,7 +140,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     /**
      * Show notification from serviceWorker
      * This is an experimental technology!
-     * @param  Promise<NotificationEvent>
+     * @return  Promise<NotificationEvent>
      */
     protected _showNotifServiceWorker(): Promise<NotificationEvent> {
         return new Promise((resolve, reject) => {
@@ -168,7 +168,7 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * Get notification object from serviceWorker
-     * @param  Promise<Notification>
+     * @return  Promise<Notification>
      */
     protected _getNotifServiceWorker(): Promise<Notification> {
         return new Promise((resolve, reject) => {
@@ -194,8 +194,8 @@ export default class BrowserNotif implements BrowserNotifInterface
      * Create notify
      * @param  {string} title    
      * @param  {string} body     
-     * @param  {Event}  callback 
-     * @return {BrowserNotif}          
+     * @param  {BrowserNotifEvent}  notifEvent
+     * @return Promise<any>
      */
     public notify(title: string, body: string, notifEvent?: BrowserNotifEvent): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -238,7 +238,8 @@ export default class BrowserNotif implements BrowserNotifInterface
     
     /**
      * Create an instance of Notification API
-     * @return {Promise<Notification>}
+     * @param {BrowserNotifEvent} notifEvent
+     * @return {Promise<any>}
      */
     protected _notify(notifEvent?: BrowserNotifEvent): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -285,6 +286,10 @@ export default class BrowserNotif implements BrowserNotifInterface
         }
     }
 
+    /**
+     * Prepare for Notification Event
+     * @param {BrowserNotifEvent} notifEvent
+     */
     protected _prepareNotifEvent(notifEvent?: BrowserNotifEvent): void {
         if (typeof notifEvent != 'undefined' && this.notification instanceof Notification) {
             if (typeof notifEvent.click == 'function') {
@@ -302,9 +307,8 @@ export default class BrowserNotif implements BrowserNotifInterface
     }
     
     /**
-     * Click event on serviceWorker Notification
-     * @param  {}  callback
-     * @return {BrowserNotif}
+     * Prepare for click event on serviceWorker Notification
+     * @param  {BrowserNotifEvent}  notifEvent
      */
     protected _prepareClickOnServiceWorker(notifEvent?: BrowserNotifEvent): void {
         if (typeof notifEvent != 'undefined' && typeof notifEvent.clickOnServiceWorker == 'function') {
