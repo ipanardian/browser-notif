@@ -29,7 +29,7 @@ export interface BrowserNotifOptions extends NotificationOptions {
  * Interface for BrowserNotif
  */
 export interface BrowserNotifInterface {
-    notify(title: string, body: string, notifEvent?: BrowserNotifEvent): Promise<Notification>
+    notify(title: string, body: string, notifEvent?: BrowserNotifEvent): Promise<any>
     close(): void
     isMobile(): boolean
 }
@@ -38,9 +38,9 @@ export interface BrowserNotifInterface {
  * Interface for BrowserNotifEvent
  */
 export interface BrowserNotifEvent {
-    click(): void
-    clickOnServiceWorker(): void
-    error(): void
+    click?(): void
+    clickOnServiceWorker?(): void
+    error?(): void
 }
 
 /**
