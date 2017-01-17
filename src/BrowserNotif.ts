@@ -11,7 +11,7 @@
 /// <reference path='Notification.d.ts' />
 /// <reference path='ServiceWorkerApi.d.ts' />
 
-import {BrowserNotifOptions, BrowserNotifInterface, PermissionInterface, Data} from './Interface'
+import {BrowserNotifOptions, BrowserNotifInterface, BrowserNotifEvent, PermissionInterface, Data} from './Interface'
 
 export default class BrowserNotif implements BrowserNotifInterface  
 {
@@ -197,30 +197,30 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @param  {Event}  callback 
      * @return {BrowserNotif}          
      */
-    public notify(title: string, body: string, callback?: (notif: Notification) => void): BrowserNotif {
-        if (!BrowserNotif.isSupported()) {
-            alert(`${title}\n\n${body}`)
-            return this
-        }
-        this._validateTitle(title)
-        
-        this.title              = title;
-        this.notifOptions.body  = body;
-        if (this.Permission.Granted === Notification.permission) {
-            this._notify().then(notificaton => callback(notificaton))
-        }
-        else if (this.Permission.Denied !== Notification.permission) {
-            BrowserNotif.requestPermission().then(permission => {
-                if (this.Permission.Granted === permission) {
-                    this._notify().then(notificaton => callback(notificaton))
-                }
-            });
-        }
-        else {
-            console.warn('User denied the notification permission')
-        }
-        
-        return this
+    public notify(title: string, body: string, notifEvent?: BrowserNotifEvent): Promise<Notification> {
+        return new Promise((resolve, reject) => {
+            if (!BrowserNotif.isSupported()) {
+                alert(`${title}\n\n${body}`)
+                resolve() 
+            }
+            this._validateTitle(title)
+            
+            this.title              = title;
+            this.notifOptions.body  = body;
+            if (this.Permission.Granted === Notification.permission) {
+                this._notify(notifEvent).then(notificaton => resolve(notificaton))
+            }
+            else if (this.Permission.Denied !== Notification.permission) {
+                BrowserNotif.requestPermission().then(permission => {
+                    if (this.Permission.Granted === permission) {
+                        this._notify(notifEvent).then(notificaton => resolve(notificaton))
+                    }
+                });
+            }
+            else {
+                reject('User denied the notification permission')
+            }
+        })
     }
     
     /**
@@ -240,11 +240,12 @@ export default class BrowserNotif implements BrowserNotifInterface
      * Create an instance of Notification API
      * @return {Promise<Notification>}
      */
-    protected _notify(): Promise<Notification> {
+    protected _notify(notifEvent?: BrowserNotifEvent): Promise<Notification> {
         return new Promise((resolve, reject) => {
             if (this.isMobile()) {
                 Promise.resolve().then(() => {
                     this._registerServiceWorker()
+                    this._prepareClickOnServiceWorker.apply(this, [notifEvent])
                     return this._showNotifServiceWorker()
                     
                 })
@@ -264,6 +265,7 @@ export default class BrowserNotif implements BrowserNotifInterface
                         this.notification.close()
                     }
                     this.notification = new Notification(this.title, this.notifOptions)
+                    this._prepareNotifEvent.apply(this, [notifEvent])
                     this._closeNotification()
                     resolve(this.notification)
                 })
@@ -282,20 +284,35 @@ export default class BrowserNotif implements BrowserNotifInterface
             setTimeout(this.notification.close.bind(this.notification), this.timeout * 1e3);
         }
     }
+
+    protected _prepareNotifEvent(notifEvent?: BrowserNotifEvent): void {
+        if (typeof notifEvent != 'undefined' && this.notification instanceof Notification) {
+            if (typeof notifEvent.click == 'function') {
+                this.notification.onclick = () => {
+                    this.notification.close()
+                    notifEvent.click.call(this)
+                }
+            }
+            if (typeof notifEvent.error == 'function') {
+                this.notification.onerror = () => {
+                    notifEvent.error.call(this)
+                }
+            }
+        }
+    }
     
     /**
      * Click event on Notification
      * @param  {}  callback
      * @return {BrowserNotif}
      */
-    public click(callback: () => void): BrowserNotif {
+    private _click(callback: () => void): void {
         if (typeof callback === 'function' && this.notification instanceof Notification) {
             this.notification.onclick = () => {
                 this.notification.close()
                 callback.call(this);
             }
         }
-        return this
     }
     
     /**
@@ -303,11 +320,10 @@ export default class BrowserNotif implements BrowserNotifInterface
      * @param  {}  callback
      * @return {BrowserNotif}
      */
-    public clickOnServiceWorker(callback: () => void): BrowserNotif {
-        if (typeof callback === 'function') {
-            this.data.clickOnServiceWorker = callback.toString()
+    protected _prepareClickOnServiceWorker(notifEvent?: BrowserNotifEvent): void {
+        if (typeof notifEvent != 'undefined' && typeof notifEvent.clickOnServiceWorker == 'function') {
+            this.data.clickOnServiceWorker = notifEvent.clickOnServiceWorker.toString()
         }
-        return this
     }
     
     /**
