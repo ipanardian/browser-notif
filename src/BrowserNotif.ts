@@ -130,7 +130,7 @@ export default class BrowserNotif implements BrowserNotifInterface
      */
     protected _registerServiceWorker(): void {
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register(this.options.serviceWorkerPath || 'sw.js').then(serviceWorkerRegistration => {
+            navigator.serviceWorker.register(this.options.serviceWorkerPath || 'sw.min.js').then(serviceWorkerRegistration => {
                 console.log('Service Worker is ready :', serviceWorkerRegistration)
             })
             .catch(e => console.warn('BrowserNotif: ', e))
