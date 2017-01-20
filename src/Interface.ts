@@ -39,7 +39,7 @@ export interface BrowserNotifInterface {
  */
 export interface BrowserNotifEvent {
     click?(): void
-    clickOnServiceWorker?(): void
+    clickOnServiceWorker?(clients: Clients): void
     error?(): void
 }
 
@@ -58,4 +58,24 @@ export interface PermissionInterface {
 export interface BrowserNotifData {
     [key: string]: any
     clickOnServiceWorker?: string
+}
+
+/**
+ * The Clients interface of the Service Workers API
+ */
+export interface Clients {
+    get(id: string): Promise<Client>
+    matchAll(options: Object): Promise<Clients>
+    openWindow(url: string): void
+    claim(): Promise<any>
+}
+
+/**
+ * The Client interface of the Service Workers API
+ */
+export interface Client {
+    readonly frameType: string
+    readonly id: string
+    readonly url: string
+    postMessage(message: string, transfer?: Object): void
 }
