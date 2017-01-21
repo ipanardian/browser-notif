@@ -27,29 +27,16 @@ import BrowserNotif from './BrowserNotif'
 BrowserNotif.requestPermission().then(p => console.log(p))
 
 // Create instance
-let notif1 = new BrowserNotif()
+let notif1 = new BrowserNotif({
+	icon: 'logo.png',
+	lang: 'en-US',
+	timeout: 10 // How long notif will be appear in seconds
+})
 
 notif1
 		.notify('First Notif', 'Hi there! Nice to meet you.', {
 		    click() {
 				window.open('//ipanardian.com')
-		    }
-		})
-		.then(() => {
-			//Do something
-		})
-
-// With options
-let notif2 = new BrowserNotif({
-	icon: 'icon.png',
-	lang: 'en-US',
-	timeout: 10 // How long notif will be appear in seconds
-})	
-
-notif2 	
-		.notify('Second Notif', 'Typescript has released new version, chek it out!', {
-		    click() {
-				window.open('https://www.typescriptlang.org')
 		    },
 			error() {
 				//On error
@@ -90,9 +77,6 @@ Notification on mobile devices is using ```Service Worker```. A service worker i
 var notif = new BrowserNotif({icon: 'icon.png', serviceWorkerPath: 'sw.min.js'})
 notif
 		.notify('First Notif', 'Hi there! Nice to meet you.', {
-		    click() {
-				window.open('//ipanardian.com')
-		    },
 			.clickOnServiceWorker(clients => {
           		clients.openWindow('//ipanardian.com')
         	})
