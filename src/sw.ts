@@ -27,7 +27,7 @@ self.onnotificationclick = function(event) {
       }
       try {
         if (data !== null && data.clickOnServiceWorker !== undefined) {
-          Function("(" +data['clickOnServiceWorker']+ ")()")()   
+          Function("(" +data['clickOnServiceWorker']+ ")(clients)")()   
         }
       } catch (error) {
         throw new Error('BrowserNotif: Error clickOnServiceWorker '+ error)

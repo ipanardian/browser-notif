@@ -24,32 +24,26 @@ npm install browser-notif --save
 import BrowserNotif from './BrowserNotif'
 
 // If you want to explicitly call request permission. Usually this is only called once.
-BrowserNotif.requestPermission(p => console.log(p))
+BrowserNotif.requestPermission().then(p => console.log(p))
 
 // Create instance
-let notif1 = new BrowserNotif()
+let notif1 = new BrowserNotif({
+	icon: 'logo.png',
+	lang: 'en-US',
+	timeout: 10 // How long notif will be appear in seconds
+})
 
 notif1
-		.notify('First Notif', 'Hi there! Nice to meet you.', (n) => {
-			console.log('First Notif fired!', n)
+		.notify('First Notif', 'Hi there! Nice to meet you.', {
+		    click() {
+				window.open('//ipanardian.com')
+		    },
+			error() {
+				//On error
+			}
 		})
-		.click(() => { 
-			window.open('https://www.ipanardian.com')
-		})
-
-// With options
-let notif2 = new BrowserNotif({
-	icon: 'icon.png',
-	lang: 'en-US',
-	timeout: 10 // How long notif will appear in seconds
-})	
-
-notif2 	
-		.notify('Second Notif', 'Typescript has released new version, chek it out!', (n) => {
-			console.log('Second Notif fired!', n)
-		})
-		.click(() => { 
-			window.open('https://www.typescriptlang.org')
+		.then(() => {
+			//Do something
 		})
 		
 //close notif pragmatically
@@ -59,34 +53,36 @@ notif1.close()
 ### Javascript
 In Javascript BrowserNotif use UMD module pattern and Polyfill for ```Object.assign```.
 ```js
-BrowserNotif.default.requestPermission(function(p) {
-	console.log(p)
-})
+BrowserNotif.default.requestPermission().then(p => console.log(p))
 
 var notif = new BrowserNotif.default({icon: 'icon.png'})
 
 notif
-		.notify('First Notif', 'Hi there! Nice to meet you.', function(n) {
-			console.log('First Notif fired!', n)
+		.notify('First Notif', 'Hi there! Nice to meet you.', {
+		    click: function() {
+				window.open('//ipanardian.com')
+		    }
 		})
-		.click(function() { 
-			window.open('https://www.ipanardian.com')
+		.then(function() {
+			//Do something
 		})
 ```
 
 ## Notification On Mobile Devices
 Notification on mobile devices is using ```Service Worker```. A service worker is an event-driven worker registered against an origin and a path. Service worker runs in the background and only run over HTTPS.
 
-> Put file 'sw.js' on root directory
+> Put file 'sw.min.js' on root directory of application
 
 ```js
-var notif = new BrowserNotif.default({icon: 'icon.png'})
+var notif = new BrowserNotif({icon: 'icon.png', serviceWorkerPath: 'sw.min.js'})
 notif
-		.clickOnServiceWorker(function(){
-              		clients.openWindow('//ipanardian.com')
-            	})
-		.notify('Notif from Ipan Ardian', 'Hi there! Nice to meet you.', function(n) {
-			console.log(n)
+		.notify('First Notif', 'Hi there! Nice to meet you.', {
+			.clickOnServiceWorker(clients => {
+          		clients.openWindow('//ipanardian.com')
+        	})
+		})
+		.then(() => {
+			//Do something
 		})
 ```
 ![gif](http://i.giphy.com/l3vRfm7aebpZjQHf2.gif)
@@ -107,7 +103,7 @@ Check 'dist' folder.
 - BrowserNotif.js 
 - BrowserNotif.min.js 
 - BrowserNotif.min.js.map
-- sw.js
+- sw.min.js
 
 ## Browser compatibility
 If browser not support Notification API then native alert will be triggered.
