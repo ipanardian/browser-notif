@@ -44,29 +44,25 @@
     var notif2 = new BrowserNotif.default({icon: 'indosystem.png', timeout: 3})
     
     document.getElementById('requestPermission').addEventListener('click', function() {
-        notif1   
-            .clickOnServiceWorker(function(){
-              clients.openWindow('//ipanardian.com')
-            })
-            .notify('ipanardian.com', 'New open source project has been released. Check it out!', function(notif) {
-                console.log(notif)
-            })
-            .click(function() {
+        notif1.notify('ipanardian.com', 'New open source project has been released. Check it out!', {
+            click: function() {
                 window.open('//ipanardian.com')
-            })
+            },
+            clickOnServiceWorker: function(clients) {
+                clients.openWindow('//ipanardian.com')
+            }
+        })
         
         setTimeout(function() {
-           notif2
-            .clickOnServiceWorker(function(){
-              clients.openWindow('//indosystem.com')
-            })
-            .notify('Second Notif', 'Indosystem Build Technology for The Better World', function(notif) {
-                console.log(notif)
-            })
-            .click(function() {
-                window.open('//indosystem.com')
-            })
-        }, 1000);
+          notif2.notify('Second Notif', 'Indosystem Build Technology for The Better World', {
+              click: function() {
+                  window.open('//indosystem.com')
+              },
+              clickOnServiceWorker: function(clients) {
+                  clients.openWindow('//indosystem.com')
+              }
+          })
+        }, 3000);
     })
     </script>
   </body>
