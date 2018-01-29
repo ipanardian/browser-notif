@@ -28,24 +28,24 @@ BrowserNotif.requestPermission().then(p => console.log(p))
 
 // Create instance
 let notif1 = new BrowserNotif({
-	icon: 'logo.png',
-	lang: 'en-US',
-	timeout: 10 // How long notif will be appear in seconds
+    icon: 'logo.png',
+    lang: 'en-US',
+    timeout: 10 // How long notif will be appear in seconds
 })
 
 notif1
-		.notify('First Notif', 'Hi there! Nice to meet you.', {
-		    click() {
-				window.open('//ipanardian.com')
-		    },
-			error() {
-				//On error
-			}
-		})
-		.then(() => {
-			//Do something
-		})
-		
+    .notify('First Notif', 'Hi there! Nice to meet you.', {
+        click() {
+            window.open('//ipanardian.com')
+        },
+        error() {
+            //On error
+        }
+    })
+    .then(() => {
+        //Do something
+    })
+
 //close notif pragmatically
 notif1.close()			
 ```
@@ -55,17 +55,17 @@ In Javascript BrowserNotif use UMD module pattern and Polyfill for ```Object.ass
 ```js
 BrowserNotif.default.requestPermission().then(p => console.log(p))
 
-var notif = new BrowserNotif.default({icon: 'icon.png'})
+var notif = new BrowserNotif.default({ icon: 'icon.png' })
 
 notif
-		.notify('First Notif', 'Hi there! Nice to meet you.', {
-		    click: function() {
-				window.open('//ipanardian.com')
-		    }
-		})
-		.then(function() {
-			//Do something
-		})
+    .notify('First Notif', 'Hi there! Nice to meet you.', {
+        click: function () {
+            window.open('//ipanardian.com')
+        }
+    })
+    .then(function () {
+        //Do something
+    })
 ```
 
 ## Notification On Mobile Devices
@@ -74,16 +74,16 @@ Notification on mobile devices is using ```Service Worker```. A service worker i
 > Put file 'sw.min.js' on root directory of application
 
 ```js
-var notif = new BrowserNotif({icon: 'icon.png', serviceWorkerPath: 'sw.min.js'})
+var notif = new BrowserNotif({ icon: 'icon.png', serviceWorkerPath: 'sw.min.js' })
 notif
-		.notify('First Notif', 'Hi there! Nice to meet you.', {
-			.clickOnServiceWorker(clients => {
-          		clients.openWindow('//ipanardian.com')
-        	})
-		})
-		.then(() => {
-			//Do something
-		})
+    .notify('First Notif', 'Hi there! Nice to meet you.', {
+        clickOnServiceWorker(clients) {
+            clients.openWindow('//ipanardian.com')
+        }
+    })
+    .then(() => {
+        //Do something
+    })
 ```
 ![gif](http://i.giphy.com/l3vRfm7aebpZjQHf2.gif)
 
